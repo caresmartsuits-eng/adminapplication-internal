@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { getToken, setToken, clearToken, parseJwt, fetchWithAuthJSON } from './utils/auth';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UserDashboard from './pages/user/UserDashboard';
+// eslint-disable-next-line no-undef
 
 // ... existing code ...
 
