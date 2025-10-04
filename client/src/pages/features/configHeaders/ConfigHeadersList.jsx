@@ -11,7 +11,7 @@ export default function ConfigHeadersList({ setView }) {
     const token = localStorage.getItem('token');
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/config-headers', {
+      const response = await fetch(import.meta.env.VITE_API_BASE + '/api/admin/config-headers', {
         headers: { Authorization: 'Bearer ' + token },
       });
       if (!response.ok) {

@@ -13,7 +13,7 @@ export default function OrdersList() {
     const token = localStorage.getItem('token');
     try {
       setLoading(true);
-      let url = '/api/orders';
+      let url = import.meta.env.VITE_API_BASE + '/api/orders';
       const params = new URLSearchParams();
       if (snum) params.append('snum', snum);
       if (orderNumber) params.append('orderNumber', orderNumber);

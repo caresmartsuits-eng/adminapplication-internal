@@ -16,7 +16,7 @@ export default function CreateConfigHeader({ onConfigHeaderCreated }) {
     setCreateHeaderError('');
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch('/api/admin/config-headers/create', {
+      const response = await fetch(import.meta.env.VITE_API_BASE + '/api/admin/config-headers/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

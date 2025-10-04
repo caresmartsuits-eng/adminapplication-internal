@@ -9,7 +9,7 @@ export default function AuditLogsList() {
     const fetchAudits = async () => {
       const token = localStorage.getItem('token');
       try {
-        const response = await fetch('/api/audits', {
+        const response = await fetch(import.meta.env.VITE_API_BASE + '/api/audits', {
           headers: { Authorization: 'Bearer ' + token },
         });
         if (!response.ok) {

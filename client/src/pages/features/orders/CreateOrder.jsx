@@ -17,7 +17,7 @@ export default function CreateOrder({ role }) {
   const fetchNextSnum = async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch('/api/orders/next-snum', {
+      const response = await fetch(import.meta.env.VITE_API_BASE + '/api/orders/next-snum', {
         headers: { Authorization: 'Bearer ' + token },
       });
       if (response.ok) {
@@ -32,7 +32,7 @@ export default function CreateOrder({ role }) {
   const fetchProdTypes = async () => {
     const token = localStorage.getItem('token');
     try {
-      const configRes = await fetch('/api/admin/configurations', {
+      const configRes = await fetch(import.meta.env.VITE_API_BASE + '/api/admin/configurations', {
         headers: { Authorization: 'Bearer ' + token },
       });
       if (!configRes.ok) throw new Error('Failed to fetch configurations');
@@ -52,7 +52,7 @@ export default function CreateOrder({ role }) {
       const fetchUsers = async () => {
         const token = localStorage.getItem('token');
         try {
-          const userResponse = await fetch('/api/admin/users', {
+          const userResponse = await fetch(import.meta.env.VITE_API_BASE + '/api/admin/users', {
             headers: { Authorization: 'Bearer ' + token },
           });
           if (userResponse.ok) {
@@ -81,7 +81,7 @@ export default function CreateOrder({ role }) {
     const assignedUserValue = role === 'user' ? newOrder.assigned_user : newOrder.assigned_user;
 
     try {
-      const response = await fetch('/api/orders/create', {
+      const response = await fetch(import.meta.env.VITE_API_BASE + '/api/orders/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

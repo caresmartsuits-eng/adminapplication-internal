@@ -20,7 +20,7 @@ export default function CreateConfiguration({ onConfigCreated, headers }) {
     const fetchCategories = async () => {
       const token = localStorage.getItem('token');
       try {
-        const response = await fetch('/api/admin/active-config-headers', {
+        const response = await fetch(import.meta.env.VITE_API_BASE + '/api/admin/active-config-headers', {
           headers: { Authorization: 'Bearer ' + token },
         });
         if (!response.ok) {
@@ -57,7 +57,7 @@ export default function CreateConfiguration({ onConfigCreated, headers }) {
     setCreateConfigError('');
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch('/api/admin/configurations/create', {
+      const response = await fetch(import.meta.env.VITE_API_BASE + '/api/admin/configurations/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

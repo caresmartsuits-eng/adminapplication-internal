@@ -11,7 +11,7 @@ export default function UpdateConfigHeaderModal({ header, onClose, onHeaderUpdat
     setUpdateError('');
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch(`/api/admin/config-headers/update/${updatedHeader.id}`, {
+      const response = await fetch(import.meta.env.VITE_API_BASE + `/api/admin/config-headers/update/${updatedHeader.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

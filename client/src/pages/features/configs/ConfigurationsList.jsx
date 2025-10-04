@@ -19,7 +19,7 @@ export default function ConfigurationsList({ setView }) {
         try {
             setLoading(true);
             setError('');
-            const data = await fetchWithAuthJSON('/api/admin/configurations');
+            const data = await fetchWithAuthJSON(import.meta.env.VITE_API_BASE + '/api/admin/configurations');
             setConfigs(data);
         } catch (e) {
             setError(e.message || 'Failed to load configurations');
@@ -30,7 +30,7 @@ export default function ConfigurationsList({ setView }) {
   const fetchConfigs = async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch('/api/admin/configurations', {
+      const response = await fetch(import.meta.env.VITE_API_BASE + '/api/admin/configurations', {
         headers: { Authorization: 'Bearer ' + token },
       });
       if (!response.ok) {
@@ -68,7 +68,7 @@ export default function ConfigurationsList({ setView }) {
     const saveEdit = async () => {
         try {
             setError('');
-            await fetchWithAuthJSON(`/api/admin/configurations/update/${editingId}`, {
+            await fetchWithAuthJSON(import.meta.env.VITE_API_BASE + `/api/admin/configurations/update/${editingId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(form),

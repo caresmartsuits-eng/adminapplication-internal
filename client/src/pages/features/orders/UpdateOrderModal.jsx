@@ -10,7 +10,7 @@ export default function UpdateOrderModal({ order, onClose, onOrderUpdated }) {
   const fetchConfigurations = async (category, setStateFunction) => {
     const token = localStorage.getItem('token');
     try {
-      const configRes = await fetch('/api/configurations/active', {
+      const configRes = await fetch(import.meta.env.VITE_API_BASE + '/api/configurations/active', {
         headers: { Authorization: 'Bearer ' + token },
       });
       if (!configRes.ok) throw new Error('Failed to fetch configurations');
@@ -32,7 +32,7 @@ export default function UpdateOrderModal({ order, onClose, onOrderUpdated }) {
     setUpdateError('');
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch('/api/orders/update/' + order.id, {
+      const response = await fetch(import.meta.env.VITE_API_BASE + '/api/orders/update/' + order.id, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

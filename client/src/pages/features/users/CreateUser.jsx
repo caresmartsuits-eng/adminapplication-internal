@@ -11,7 +11,7 @@ export default function CreateUser({ onUserCreated }) {
     setCreateUserError('');
     const token = localStorage.getItem('token');
     try {
-      const response = await fetch('/api/admin/create-user', {
+      const response = await fetch(import.meta.env.VITE_API_BASE + '/api/admin/create-user', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

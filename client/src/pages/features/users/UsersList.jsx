@@ -9,7 +9,7 @@ export default function UsersList() {
     const fetchAllUsers = async () => {
       const token = localStorage.getItem('token');
       try {
-        const response = await fetch('/api/admin/users', {
+        const response = await fetch(import.meta.env.VITE_API_BASE + '/api/admin/users', {
           headers: { Authorization: 'Bearer ' + token },
         });
         if (!response.ok) {

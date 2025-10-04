@@ -18,7 +18,7 @@ export default function ConfigurationsList() {
         try {
             setLoading(true);
             setError('');
-            const data = await fetchWithAuthJSON('/api/admin/configurations');
+            const data = await fetchWithAuthJSON(import.meta.env.VITE_API_BASE + '/api/admin/configurations');
             setConfigs(data);
         } catch (e) {
             setError(e.message || 'Failed to load configurations');
@@ -49,7 +49,7 @@ export default function ConfigurationsList() {
     const saveEdit = async () => {
         try {
             setError('');
-            await fetchWithAuthJSON(`/api/admin/configurations/update/${editingId}`, {
+            await fetchWithAuthJSON(import.meta.env.VITE_API_BASE + `/api/admin/configurations/update/${editingId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(form),
@@ -65,7 +65,7 @@ export default function ConfigurationsList() {
         if (!confirm('Delete this configuration?')) return;
         try {
             setError('');
-            await fetchWithAuthJSON(`/api/admin/configurations/update/${id}`, {
+            await fetchWithAuthJSON(import.meta.env.VITE_API_BASE + `/api/admin/configurations/update/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 // Soft-delete by setting status to D (matches backend validation)

@@ -29,7 +29,7 @@ export default function App() {
         e.preventDefault();
         setError('');
         try {
-            const res = await fetch('/api/login', {
+            const res = await fetch(import.meta.env.VITE_API_BASE + '/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: form.username, password: form.password }),
@@ -57,7 +57,7 @@ export default function App() {
 
     const pingProtected = async () => {
         try {
-            await fetchWithAuthJSON('/api/admin/users');
+            await fetchWithAuthJSON(import.meta.env.VITE_API_BASE + '/api/admin/users');
             alert('Protected request succeeded');
         } catch (e) {
             alert('Protected request failed: ' + e.message);
