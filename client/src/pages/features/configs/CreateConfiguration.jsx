@@ -91,7 +91,7 @@ export default function CreateConfiguration({ onConfigCreated, headers }) {
 
   return (
     <div className="p-4">
-      <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">
+      <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 text-left md:text-center">
         Add New Configuration
       </h3>
       <form

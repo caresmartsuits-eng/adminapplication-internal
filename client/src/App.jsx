@@ -4,12 +4,20 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import UserDashboard from './pages/user/UserDashboard';
 // eslint-disable-next-line no-undef
 
-// ... existing code ...
+// A simple loading spinner component (purely for demonstration, you might use a library one)
+const LoadingSpinner = () => (
+    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+    </svg>
+);
 
 export default function App() {
     const [auth, setAuth] = useState({ token: null, role: null, username: '' });
     const [form, setForm] = useState({ username: '', password: '' });
     const [error, setError] = useState('');
+    // New state to track if the login request is in progress
+    const [isLoading, setIsLoading] = useState(false); 
 
     useEffect(() => {
         const token = getToken();
@@ -28,6 +36,9 @@ export default function App() {
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
+        // 1. Start loading
+        setIsLoading(true); 
+
         try {
             const res = await fetch(import.meta.env.VITE_API_BASE + '/api/login', {
                 method: 'POST',
@@ -45,6 +56,9 @@ export default function App() {
             setForm({ username: '', password: '' });
         } catch (err) {
             setError(err.message || 'Login failed');
+        } finally {
+            // 2. Stop loading, regardless of success or failure
+            setIsLoading(false); 
         }
     };
 
@@ -84,6 +98,8 @@ export default function App() {
                             onChange={(e) => setForm((s) => ({ ...s, username: e.target.value }))}
                             autoComplete="username"
                             required
+                            // Disable input while loading
+                            disabled={isLoading} 
                         />
                     </div>
                     <div>
@@ -95,17 +111,35 @@ export default function App() {
                             onChange={(e) => setForm((s) => ({ ...s, password: e.target.value }))}
                             autoComplete="current-password"
                             required
+                            // Disable input while loading
+                            disabled={isLoading} 
                         />
                     </div>
                     {error && <p className="text-red-600 text-sm">{error}</p>}
-                    <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700">
-                        Login
+                    <button
+                        type="submit"
+                        className={`w-full py-2 rounded transition-colors flex items-center justify-center ${
+                            // Change button style based on loading state
+                            isLoading
+                                ? 'bg-blue-400 cursor-not-allowed'
+                                : 'bg-blue-600 hover:bg-blue-700 text-white'
+                        }`}
+                        // Disable button while loading
+                        disabled={isLoading} 
+                    >
+                        {/* Display spinner and text based on loading state */}
+                        {isLoading ? (
+                            <>
+                                <LoadingSpinner />
+                                Logging in...
+                            </>
+                        ) : (
+                            'Login'
+                        )}
                     </button>
                 </form>
 
-                <button onClick={pingProtected} className="mt-4 w-full border py-2 rounded text-sm">
-                    Test protected call
-                </button>
+
             </div>
         </div>
     );

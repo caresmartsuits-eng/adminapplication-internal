@@ -45,7 +45,7 @@ export default function CreateConfigHeader({ onConfigHeaderCreated }) {
 
   return (
     <div className="p-4">
-      <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4">Add New Config Category</h3>
+      <h3 className="text-xl sm:text-2xl font-semibold text-gray-800 mb-4 text-left md:text-center">Add New Config Category</h3>
       <form
         onSubmit={handleCreateHeader}
         className="space-y-3 sm:space-y-4 max-w-lg mx-auto bg-white p-5 sm:p-6 rounded-xl shadow-md"
