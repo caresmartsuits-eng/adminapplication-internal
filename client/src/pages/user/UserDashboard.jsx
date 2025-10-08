@@ -6,12 +6,14 @@ import SidebarNav from '../../components/SidebarNav';
 // Plug your real feature components below
 import OrdersList from '../features/orders/OrdersList';
 import CreateOrder from '../features/orders/CreateOrder';
+import UpdateProfile from '../features/users/UpdateProfile';
+import UpdatePassword from '../features/users/UpdatePassword';
 
 const Container = ({ children, className = '' }) => (
   <div className={`mx-auto w-full max-w-7xl px-3 sm:px-4 md:px-6 ${className}`}>{children}</div>
 );
 
-export default function UserDashboard({ onLogout }) {
+export default function UserDashboard({ onLogout,username }) {
   const [view, setView] = React.useState('dashboard');
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
@@ -19,6 +21,8 @@ export default function UserDashboard({ onLogout }) {
     { key: 'dashboard', label: 'Home' },
     { key: 'orders', label: 'Orders' },
     { key: 'createOrder', label: 'Create Order' },
+    { key: 'updateProfile', label: 'Update Profile' },
+    { key: 'updatePassword', label: 'Update Password' },
   ];
 
   const renderContent = () => {
@@ -27,6 +31,11 @@ export default function UserDashboard({ onLogout }) {
         return <OrdersList />;
       case 'createOrder':
         return <CreateOrder role="user" />;
+      case 'updateProfile':
+        // Passing role='user' and the logged-in username
+        return <UpdateProfile role="user" currentUsername={username} />;
+      case 'updatePassword':
+        return <UpdatePassword username={username} />;
       default:
         return (
           <div className="text-center p-6 sm:p-8">

@@ -3,6 +3,7 @@ import TopBar from '../../components/TopBar';
 import Drawer from '../../components/Drawer';
 import SidebarNav from '../../components/SidebarNav';
 
+
 // Plug your real feature components below
 import UsersList from '../features/users/UsersList';
 import CreateUser from '../features/users/CreateUser';
@@ -13,12 +14,14 @@ import ConfigurationsList from '../features/configs/ConfigurationsList';
 import CreateConfiguration from '../features/configs/CreateConfiguration';
 import ConfigHeadersList from '../features/configHeaders/ConfigHeadersList';
 import CreateConfigHeader from '../features/configHeaders/CreateConfigHeader';
+import UpdateProfile from '../features/users/UpdateProfile';
+import UpdatePassword from '../features/users/UpdatePassword';
 
 const Container = ({ children, className = '' }) => (
   <div className={`mx-auto w-full max-w-7xl px-3 sm:px-4 md:px-6 ${className}`}>{children}</div>
 );
 
-export default function AdminDashboard({ onLogout }) {
+export default function AdminDashboard({ onLogout, username }) {
   const [view, setView] = React.useState('dashboard');
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
@@ -31,6 +34,8 @@ export default function AdminDashboard({ onLogout }) {
     { key: 'configurations', label: 'Configurations' },
     { key: 'configHeaders', label: 'Config Headers' },
     { key: 'audits', label: 'Audit Logs' },
+    { key: 'updateProfile', label: 'Update Profile' },
+    { key: 'updatePassword', label: 'Update Password' },
   ];
 
   const renderContent = () => {
@@ -53,7 +58,11 @@ export default function AdminDashboard({ onLogout }) {
         return <ConfigHeadersList setView={setView} />;
       case 'createConfigHeader':
         return <CreateConfigHeader onConfigHeaderCreated={() => setView('configHeaders')} />;
-      default:
+      case 'updateProfile':
+        return <UpdateProfile role="admin" currentUsername={username} />;
+      case 'updatePassword': // <-- ADD THIS CASE
+        return <UpdatePassword username={username} />;
+        default:
         return (
           <div className="text-center p-6 sm:p-8">
             <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-2">

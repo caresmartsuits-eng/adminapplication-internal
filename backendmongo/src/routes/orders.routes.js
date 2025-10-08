@@ -26,9 +26,9 @@ orderRoutes.get('/orders/next-snum', authenticateToken, async (_req, res) => {
 });
 
 orderRoutes.post('/orders/create', authenticateToken, async (req, res) => {
-  const { snum, order_number, product_type, delivery_date, assigned_user } = req.body;
+  const { snum, order_number, product_type, delivery_date, assigned_user,quantity,person } = req.body;
   const status = 'Order Received';
-  if (!snum || !order_number || !product_type || !delivery_date || !assigned_user) {
+  if (!snum || !order_number || !product_type || !delivery_date || !assigned_user || !quantity || !person) {
     logAudit('Create order failed', req.user.username, { message: 'Missing fields', attempt: req.body });
     return res.status(400).json({ error: 'All order fields are required' });
   }
@@ -38,7 +38,7 @@ orderRoutes.post('/orders/create', authenticateToken, async (req, res) => {
       logAudit('Create order failed', req.user.username, { message: 'Duplicate SNUM attempted', snum, attempt: req.body });
       return res.status(409).json({ error: 'An order with this SNUM already exists.' });
     }
-    const doc = await Order.create({ snum, order_number, product_type, delivery_date, status, assigned_user });
+    const doc = await Order.create({ snum, order_number, product_type, delivery_date, assigned_user , quantity,person,status  });
     logAudit('Order created', req.user.username, { orderId: doc._id.toString(), orderDetails: req.body });
     res.status(201).json({ message: 'Order created successfully', orderId: doc._id.toString() });
   } catch (_e) {
@@ -69,6 +69,8 @@ orderRoutes.get('/orders', authenticateToken, async (req, res) => {
         _id: undefined,
       }))
     );
+    console.log(rows);
+    console.log(res);
   } catch (_e) {
     logAudit('View orders failed', req.user.username, { message: 'Database error' });
     res.status(500).json({ error: 'Database error' });

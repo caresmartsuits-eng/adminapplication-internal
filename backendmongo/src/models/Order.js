@@ -7,7 +7,10 @@ const Order = new mongoose.Schema(
     product_type: { type: String, required: true },
     delivery_date: { type: String, required: true }, // keep as string to match current API
     status: { type: String, required: true },
-    assigned_user: { type: String, required: true }, // username
+    assigned_user: { type: String, required: true },
+    quantity: { type: Number, required: true, min: 1 },
+    person: { type: String, required: true, trim: true },
+
   },
   {
     versionKey: false,

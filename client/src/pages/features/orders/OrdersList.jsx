@@ -92,12 +92,14 @@ export default function OrdersList() {
         <table className="min-w-full bg-white text-sm">
           <thead>
             <tr className="bg-gray-200">
-              <th className="py-3 px-4 sm:px-6 text-left font-bold text-gray-700 uppercase tracking-wider">ID</th>
+
               <th className="py-3 px-4 sm:px-6 text-left font-bold text-gray-700 uppercase tracking-wider">SNUM</th>
-              <th className="py-3 px-4 sm:px-6 text-left font-bold text-gray-700 uppercase tracking-wider">Order No.</th>
-              <th className="py-3 px-4 sm:px-6 text-left font-bold text-gray-700 uppercase tracking-wider">Product Type</th>
+              <th className="py-3 px-4 sm:px-6 text-left font-bold text-gray-700 uppercase tracking-wider">Bill Number</th>
+                <th className="py-3 px-4 sm:px-6 text-left font-bold text-gray-700 uppercase tracking-wider">Quantity</th>
+                <th className="py-3 px-4 sm:px-6 text-left font-bold text-gray-700 uppercase tracking-wider">Product Type</th>
               <th className="py-3 px-4 sm:px-6 text-left font-bold text-gray-700 uppercase tracking-wider">Delivery Date</th>
               <th className="py-3 px-4 sm:px-6 text-left font-bold text-gray-700 uppercase tracking-wider">Status</th>
+                <th className="py-3 px-4 sm:px-6 text-left font-bold text-gray-700 uppercase tracking-wider">Customer</th>
               <th className="py-3 px-4 sm:px-6 text-left font-bold text-gray-700 uppercase tracking-wider">Assigned User</th>
               <th className="py-3 px-4 sm:px-6 text-left font-bold text-gray-700 uppercase tracking-wider">Actions</th>
             </tr>
@@ -106,14 +108,16 @@ export default function OrdersList() {
             {orders.length > 0 ? (
               orders.map((order) => (
                 <tr key={order.id} className="hover:bg-gray-50">
-                  <td className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap text-gray-900">{order.id}</td>
+
                   <td className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap text-gray-600">{order.snum}</td>
                   <td className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap text-gray-600">{order.order_number}</td>
+                  <td className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap text-gray-600">{order.quantity}</td>
                   <td className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap text-gray-600">{order.product_type}</td>
                   <td className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap text-gray-600">{order.delivery_date}</td>
                   <td className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap font-semibold text-gray-600 capitalize">
                     {order.status}
                   </td>
+                  <td className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap text-gray-600">{order.person}</td>
                   <td className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap text-gray-600">{order.assigned_user}</td>
                   <td className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap">
                     <button

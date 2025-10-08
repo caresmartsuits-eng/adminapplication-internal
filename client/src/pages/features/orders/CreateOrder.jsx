@@ -8,13 +8,17 @@ export default function CreateOrder({ role }) {
     product_type: '',
     delivery_date: '',
     assigned_user: '',
+    quantity: 1,
+    person: '',
   });
   const [createOrderError, setCreateOrderError] = React.useState('');
   const [modalMessage, setModalMessage] = React.useState('');
   const [users, setUsers] = React.useState([]);
   const [productTypes, setProductTypes] = React.useState([]);
+  const [customerTypes, setCustomerTypes] = React.useState([]);
 
-  const fetchNextSnum = async () => {
+
+    const fetchNextSnum = async () => {
     const token = localStorage.getItem('token');
     try {
       const response = await fetch(import.meta.env.VITE_API_BASE + '/api/orders/next-snum', {
@@ -29,25 +33,52 @@ export default function CreateOrder({ role }) {
     }
   };
 
-  const fetchProdTypes = async () => {
-    const token = localStorage.getItem('token');
-    try {
-      const configRes = await fetch(import.meta.env.VITE_API_BASE + '/api/admin/configurations', {
-        headers: { Authorization: 'Bearer ' + token },
-      });
-      if (!configRes.ok) throw new Error('Failed to fetch configurations');
-      const configData = await configRes.json();
-      const prodTypes = configData.filter((cfg) => cfg.category === 'PROD_TYPE');
-      setProductTypes(prodTypes);
-    } catch (err) {
-      console.error('Failed to fetch product types:', err);
-    }
-  };
+    const fetchCustomerTypes = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            // FIX 1: Use the /api/configurations/active endpoint which supports category filtering
+            // FIX 2: Use the 'category' query parameter, not 'header'
+            const configRes = await fetch(
+                import.meta.env.VITE_API_BASE + '/api/configurations/active?category=CUST_TYPE',
+                { headers: { Authorization: 'Bearer ' + token } }
+            );
+
+            if (configRes.ok) {
+                const data = await configRes.json();
+                console.log('Fetched customer types:', data);
+                // FIX 3: Set customerTypes directly from the array returned by the server (data),
+                // assuming the server returns an array of objects like { id: '...', value: '...' }
+                setCustomerTypes(data || []);
+            } else {
+                console.error('Failed to fetch customer types:', configRes.statusText);
+            }
+        } catch (err) {
+            console.error('Failed to fetch customer types:', err);
+        }
+    };
+
+    const fetchProdTypes = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            // Assuming 'PROD_TYPE' is the category for product types
+            const configRes = await fetch(
+                import.meta.env.VITE_API_BASE + '/api/configurations/active?category=PROD_TYPE',
+                { headers: { Authorization: 'Bearer ' + token } }
+            );
+            if (configRes.ok) {
+                const data = await configRes.json();
+                // Assuming data is an array of objects with a 'value' field (e.g., english_description)
+                setProductTypes(data || []);
+            }
+        } catch (err) {
+            console.error('Failed to fetch product types:', err);
+        }
+    };
 
   React.useEffect(() => {
     fetchNextSnum();
     fetchProdTypes();
-
+    fetchCustomerTypes();
     if (role === 'admin') {
       const fetchUsers = async () => {
         const token = localStorage.getItem('token');
@@ -72,14 +103,34 @@ export default function CreateOrder({ role }) {
       }
     }
   }, [role]);
+    const handleChange = (e) => {
+        const { name, value } = e.target;
 
+        // Convert 'quantity' to a number if it is the quantity field
+        if (name === 'quantity') {
+            const numValue = parseInt(value, 10);
+            setNewOrder(prev => ({
+                ...prev,
+                [name]: isNaN(numValue) ? 0 : numValue >= 1 ? numValue : 1
+            }));
+        } else {
+            setNewOrder(prev => ({ ...prev, [name]: value }));
+        }
+    };
   const handleCreateOrder = async (e) => {
     e.preventDefault();
     setCreateOrderError('');
     const token = localStorage.getItem('token');
 
     const assignedUserValue = role === 'user' ? newOrder.assigned_user : newOrder.assigned_user;
-
+      if (newOrder.quantity <= 0) {
+          setCreateOrderError('Quantity must be a positive number.');
+          return;
+      }
+      if (!newOrder.person) {
+          setCreateOrderError('Person/Customer Type is required.');
+          return;
+      }
     try {
       const response = await fetch(import.meta.env.VITE_API_BASE + '/api/orders/create', {
         method: 'POST',
@@ -93,6 +144,8 @@ export default function CreateOrder({ role }) {
           product_type: newOrder.product_type,
           delivery_date: newOrder.delivery_date,
           assigned_user: assignedUserValue,
+        quantity: newOrder.quantity,
+        person: newOrder.person,
         }),
       });
 
@@ -132,7 +185,7 @@ export default function CreateOrder({ role }) {
           />
         </div>
         <div>
-          <label className="block text-gray-700 font-semibold mb-1">Order Number</label>
+          <label className="block text-gray-700 font-semibold mb-1">Bill Number</label>
           <input
             type="number"
             value={newOrder.order_number}
@@ -141,6 +194,19 @@ export default function CreateOrder({ role }) {
             required
           />
         </div>
+          <div>
+              <label htmlFor="quantity" className="block text-gray-700 font-semibold mb-1">Quantity</label>
+              <input
+                  type="number"
+                  id="quantity"
+                  name="quantity"
+                  value={newOrder.quantity}
+                  onChange={handleChange}
+                  min="1" // Enforce positive number on client side
+                  className="w-full px-3 py-2 sm:px-4 sm:py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+              />
+          </div>
         <div>
           <label className="block text-gray-700 font-semibold mb-1">Product Type</label>
           <select
@@ -167,6 +233,24 @@ export default function CreateOrder({ role }) {
             required
           />
         </div>
+          <div>
+              <label htmlFor="person" className="block text-gray-700 font-semibold mb-1">Person / Customer Type</label>
+              <select
+                  id="person"
+                  name="person"
+                  value={newOrder.person}
+                  onChange={handleChange}
+                  className="w-full px-3 py-2 sm:px-4 sm:py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  required
+              >
+                  <option value="" disabled>Select Customer Type</option>
+                  {customerTypes.map((typeObj) => (
+                      <option key={typeObj.id} value={typeObj.english_description}>
+                          {typeObj.english_description}
+                      </option>
+                  ))}
+              </select>
+          </div>
         {role === 'admin' ? (
           <div>
             <label className="block text-gray-700 font-semibold mb-1">Assigned User</label>

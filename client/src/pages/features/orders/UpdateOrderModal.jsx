@@ -88,6 +88,16 @@ export default function UpdateOrderModal({ order, onClose, onOrderUpdated }) {
               readOnly
             />
           </div>
+            <div>
+                <label className="block text-gray-700 font-semibold mb-1">Quantity</label>
+                <input
+                    type="text"
+                    value={updatedOrder.quantity}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                    readOnly
+                    disabled
+                />
+            </div>
           <div>
             <label className="block text-gray-700 font-semibold mb-1">Delivery Date</label>
             <input
@@ -97,6 +107,16 @@ export default function UpdateOrderModal({ order, onClose, onOrderUpdated }) {
               readOnly
             />
           </div>
+            <div>
+                <label className="block text-gray-700 font-semibold mb-1">Person / Customer Type</label>
+                <input
+                    type="text"
+                    value={updatedOrder.person}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                    readOnly
+                    disabled
+                />
+            </div>
           <div>
             <label className="block text-gray-700 font-semibold mb-1">Status</label>
             {statuses.length > 0 ? (

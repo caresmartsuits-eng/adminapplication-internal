@@ -51,17 +51,30 @@ export const fetchWithAuth = (url, options = {}) => {
   return fetch(url, { ...options, headers });
 };
 
-export const fetchWithAuthJSON = async (url, options = {}) => {
-  const res = await fetchWithAuth(url, options);
-  let body = null;
-  try {
-    body = await res.json();
-  } catch {
-    // non-JSON
-  }
-  if (!res.ok) {
-    const message = (body && (body.error || body.message)) || `HTTP ${res.status}`;
-    throw new Error(message);
-  }
-  return body;
+export const fetchWithAuthJSON = (url, options = {}) => {
+    const jsonHeaders = {
+        // FIX: Add Content-Type here, it will be merged into options.headers
+        'Content-Type': 'application/json',
+    };
+
+    // If options.headers exists, merge jsonHeaders with it,
+    // ensuring fetchWithAuth gets the Content-Type header
+    const mergedOptions = {
+        ...options,
+        headers: {
+            ...jsonHeaders,
+            ...options.headers,
+        },
+    };
+
+    return fetchWithAuth(url, mergedOptions)
+        .then(res => {
+            // Handle non-OK status codes before attempting to parse JSON
+            if (res.ok) {
+                return res.json();
+            }
+            // Attempt to read error message as JSON first, fallback to text/status
+            return res.json().catch(() => res.text().then(text => ({ error: text || `HTTP error! status: ${res.status}` })))
+                .then(errorData => Promise.reject(errorData));
+        });
 };

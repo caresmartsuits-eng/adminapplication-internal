@@ -17,14 +17,7 @@ export default function SidebarNav({ title, items, onSelect, onLogout }) {
           </button>
         ))}
       </nav>
-      <div className="p-4 border-t border-white/10">
-        <button
-          onClick={onLogout}
-          className="w-full bg-red-500 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:bg-red-600 transition-colors"
-        >
-          Logout
-        </button>
-      </div>
+
     </div>
   );
 }
