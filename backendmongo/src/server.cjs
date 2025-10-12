@@ -28,12 +28,21 @@ dotenv.config();
 // __dirname in CommonJS is available directly
 const app = express();
 
+
+const corsOptions = {
+    // Replace 'http://localhost:5173' with your actual frontend URL in production
+    origin: 'http://localhost:5173',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true, // Allow cookies and authentication headers
+    optionsSuccessStatus: 204 // Handle preflight requests gracefully
+};
+
 async function start() {
     try {
         await connectMongo();
         await initOnce();
 
-        app.use(cors({ origin: true, credentials: true }));
+        app.use(cors(corsOptions));
         app.use(express.json());
 
         // API routes

@@ -64,7 +64,7 @@ export default function UpdatePassword({ username }) {
 
             if (res.error) {
                 // The backend will return an error if the new password is the same as the old one
-                console.log(res.error);
+
                 throw new Error(res.error);
             }
 

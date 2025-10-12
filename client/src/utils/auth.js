@@ -52,8 +52,10 @@ export const fetchWithAuth = (url, options = {}) => {
 };
 
 export const fetchWithAuthJSON = (url, options = {}) => {
+    const token = getToken();
     const jsonHeaders = {
         // FIX: Add Content-Type here, it will be merged into options.headers
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
     };
 

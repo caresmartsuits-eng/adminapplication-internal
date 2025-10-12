@@ -1,2 +1,58 @@
 @import "tailwindcss";
 
+/* index.css */
+
+@media print {
+    /* 1. HIDE ALL ELEMENTS BY DEFAULT */
+    /* This robustly hides all top-level body children (like #root, #app, headers, footers) */
+    /* The problem rule was likely one that hid an ancestor of the printable content. */
+    body * {
+        visibility: hidden; /* Use visibility to avoid layout shifts, but display: none may be required for some components */
+    }
+
+    /* 2. MAKE THE PRINT AREA AND ITS CONTENTS VISIBLE */
+    #delivery-printable-area,
+    #delivery-printable-header,
+    #delivery-printable-area * {
+        visibility: visible !important;
+    }
+
+
+    /* 3. ENSURE PRINT AREA TAKES OVER THE PAGE */
+    #delivery-printable-area {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        min-height: 100% !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* 4. ENSURE TABLE STRUCTURE IS CORRECT */
+    /* This explicitly re-enables table display types, overriding any Tailwind or framework-level "display: block" */
+    #delivery-printable-area table {
+        display: table !important;
+        width: 100% !important;
+        border-collapse: collapse !important;
+        font-size: 10pt !important;
+    }
+
+    #delivery-printable-area thead,
+    #delivery-printable-area tbody {
+        display: table-row-group !important;
+    }
+
+    #delivery-printable-area tr {
+        display: table-row !important;
+        page-break-inside: avoid;
+    }
+
+    #delivery-printable-area th,
+    #delivery-printable-area td {
+        display: table-cell !important;
+        border: 1px solid #000 !important;
+        padding: 4px 8px !important;
+    }
+}

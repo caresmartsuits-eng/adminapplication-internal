@@ -26,6 +26,7 @@ export default function AuditLogsList() {
           throw new Error('Failed to fetch audit logs');
         }
         const data = await response.json();
+
         setAudits(data);
       } catch (err) {
         setError(err.message);
@@ -189,8 +190,8 @@ export default function AuditLogsList() {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {filteredAudits.length > 0 ? (
-                filteredAudits.map((audit, index) => (
+            {audits.length > 0 ? (
+                audits.map((audit, index) => (
                 <tr key={index} className="hover:bg-gray-50">
                   <td className="py-3 px-4 sm:py-4 sm:px-6 whitespace-nowrap text-gray-600">
                     {new Date(audit.timestamp).toLocaleString()}
@@ -203,7 +204,7 @@ export default function AuditLogsList() {
                   </td>
                   <td className="py-3 px-4 sm:py-4 sm:px-6">
                     <pre className="whitespace-pre-wrap font-mono text-[11px] sm:text-xs bg-gray-50 p-2 rounded-md">
-                      {JSON.stringify(audit.details, null, 2)}
+                      {audit.details ?JSON.stringify(audit.details, null, 2):''}
                     </pre>
                   </td>
                 </tr>

@@ -1,12 +1,22 @@
 import React from 'react';
 import Modal from '../../../components/Modal';
 
+// Helper to get today's date in 'YYYY-MM-DD' format
+const getTodayDateString = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Normalize to start of day for comparison
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
 export default function CreateOrder({ role }) {
   const [newOrder, setNewOrder] = React.useState({
     snum: '',
     order_number: '',
     product_type: '',
-    delivery_date: '',
+    delivery_date: getTodayDateString(),
     assigned_user: '',
     quantity: 1,
     person: '',
@@ -16,7 +26,7 @@ export default function CreateOrder({ role }) {
   const [users, setUsers] = React.useState([]);
   const [productTypes, setProductTypes] = React.useState([]);
   const [customerTypes, setCustomerTypes] = React.useState([]);
-
+  const todayString = getTodayDateString();
 
     const fetchNextSnum = async () => {
     const token = localStorage.getItem('token');
@@ -45,7 +55,7 @@ export default function CreateOrder({ role }) {
 
             if (configRes.ok) {
                 const data = await configRes.json();
-                console.log('Fetched customer types:', data);
+
                 // FIX 3: Set customerTypes directly from the array returned by the server (data),
                 // assuming the server returns an array of objects like { id: '...', value: '...' }
                 setCustomerTypes(data || []);
@@ -122,6 +132,7 @@ export default function CreateOrder({ role }) {
     setCreateOrderError('');
     const token = localStorage.getItem('token');
 
+
     const assignedUserValue = role === 'user' ? newOrder.assigned_user : newOrder.assigned_user;
       if (newOrder.quantity <= 0) {
           setCreateOrderError('Quantity must be a positive number.');
@@ -131,7 +142,14 @@ export default function CreateOrder({ role }) {
           setCreateOrderError('Person/Customer Type is required.');
           return;
       }
+      // 1. Delivery Date Validation: Must be today or a future date (YYYY-MM-DD comparison works)
+      if (newOrder.delivery_date < todayString) {
+          setCreateOrderError('Delivery date cannot be in the past. Please select today or a future date.');
+          return;
+      }
     try {
+
+
       const response = await fetch(import.meta.env.VITE_API_BASE + '/api/orders/create', {
         method: 'POST',
         headers: {
@@ -158,9 +176,10 @@ export default function CreateOrder({ role }) {
       setNewOrder({
         order_number: '',
         product_type: '',
-        delivery_date: '',
+        delivery_date: todayString,
         assigned_user: role === 'user' ? assignedUserValue : '',
         snum: '',
+        quantity: 1,
       });
       fetchNextSnum();
     } catch (err) {
@@ -201,7 +220,7 @@ export default function CreateOrder({ role }) {
                   id="quantity"
                   name="quantity"
                   value={newOrder.quantity}
-                  onChange={handleChange}
+                  onChange={(e) => setNewOrder({ ...newOrder, quantity: e.target.value })}
                   min="1" // Enforce positive number on client side
                   className="w-full px-3 py-2 sm:px-4 sm:py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   required
@@ -227,7 +246,9 @@ export default function CreateOrder({ role }) {
           <label className="block text-gray-700 font-semibold mb-1">Delivery Date</label>
           <input
             type="date"
+            name="delivery_date"
             value={newOrder.delivery_date}
+            min={todayString}
             onChange={(e) => setNewOrder({ ...newOrder, delivery_date: e.target.value })}
             className="w-full px-3 py-2 sm:px-4 sm:py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             required

@@ -3,6 +3,7 @@ import { getToken, setToken, clearToken, parseJwt, fetchWithAuthJSON } from './u
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UserDashboard from './pages/user/UserDashboard';
 import ForgotPassword from './pages/user/ForgotPassword';
+import ResetPassword from './pages/user/ResetPassword';
 // eslint-disable-next-line no-undef
 
 // A simple loading spinner component (purely for demonstration, you might use a library one)
@@ -12,6 +13,7 @@ const LoadingSpinner = () => (
         <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
     </svg>
 );
+import loginImage from './assets/SS_logo.png';
 
 export default function App() {
     const [auth, setAuth] = useState({token: null, role: null, username: ''});
@@ -19,6 +21,10 @@ export default function App() {
     const [error, setError] = useState('');
     // New state to track if the login request is in progress
     const [isLoading, setIsLoading] = useState(false);
+    const [showForgot, setShowForgot] = useState(false);
+    const [isResetFlow, setIsResetFlow] = useState(false);
+// Check if the current path is /reset-password
+    const isResetPath = window.location.pathname.startsWith('/reset-password');
 
     const [view, setView] = useState('login');
     useEffect(() => {
@@ -31,9 +37,29 @@ export default function App() {
                 clearToken();
             }
         }
-    }, []);
 
+        const params = new URLSearchParams(window.location.search);
+        if (params.has('token')) {
+            setIsResetFlow(true);
+            setShowForgot(false); // Make sure the ForgotPassword screen is hidden
+        }
+    }, []);
     const isAuthed = useMemo(() => Boolean(auth.token && auth.role), [auth]);
+    if (!isAuthed) {
+        if (isResetPath) {
+            if (isResetFlow) {
+                return (
+                    <ResetPassword
+                        onBack={() => {
+                            // Navigate back to the login screen and clear the URL token
+                            setIsResetFlow(false);
+                            window.history.replaceState(null, null, window.location.pathname);
+                        }}
+                    />
+                );
+            }
+        }
+    }
 
 
     const handleLogin = async (e) => {
@@ -79,14 +105,39 @@ export default function App() {
         return <UserDashboard onLogout={handleLogout} username={auth.username}/>;
     }
     //const renderContent = () => {
-        if (view === 'forgotPassword') {
-            return <ForgotPassword />;
+        if (showForgot) {
+            return <ForgotPassword onBack={() => setShowForgot(false)} />;
         }
 
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
-                <div className="bg-white w-full max-w-sm p-6 rounded-lg shadow">
-                    <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
+            <div className="min-h-screen flex">
+                {/* LEFT HALF: VISUAL/MARKETING SIDE */}
+                <div className="hidden lg:flex w-1/2 bg-gray-900 relative items-center justify-center p-12">
+                    {/* Background Image (Replace with your actual image path) */}
+                    <img
+                        src={loginImage} // Use your imported image here
+                        alt="Delivery Dashboard Background"
+                        className="absolute inset-0 h-full w-full object-cover opacity-60 "
+                    />
+                    {/* Overlay Content */}
+                    <div className="relative z-10 text-center text-white">
+                        <h1 className="text-4xl font-extrabold mb-4 drop-shadow-lg">Delivery Dashboard</h1>
+                        <p className="text-lg font-light">Efficiently manage your deliveries and users.</p>
+                        {/*  */}
+                    </div>
+                </div>
+
+                <div className={`
+                min-h-screen 
+                flex items-center justify-center p-4 
+                bg-[url('${loginImage}')] bg-no-repeat bg-top bg-contain
+                sm:bg-gray-100 sm:bg-none w-full sm:w-1/2 
+            `}>
+                    <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-6 sm:p-8">
+                        {/* Logo/Title above the form */}
+                        <h2 className="text-3xl font-bold text-gray-900 text-center mb-6">
+                            Login
+                        </h2>
                     <form onSubmit={handleLogin} className="space-y-3">
                         <div>
                             <label className="block text-sm font-medium mb-1">Username</label>
@@ -116,12 +167,8 @@ export default function App() {
                         {error && <p className="text-red-600 text-sm">{error}</p>}
                         <button
                             type="submit"
-                            className={`w-full py-2 rounded transition-colors flex items-center justify-center ${
-                                // Change button style based on loading state
-                                isLoading
-                                    ? 'bg-blue-400 cursor-not-allowed'
-                                    : 'bg-blue-600 hover:bg-blue-700 text-white'
-                            }`}
+                            className={`w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium transition-colors flex items-center justify-center ${ // Change button style based on loading state 
+                                 isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 text-white' }`}
                             // Disable button while loading
                             disabled={isLoading}
                         >
@@ -138,7 +185,7 @@ export default function App() {
                         <div className="text-center pt-2">
                             <button
                                 type="button"
-                                onClick={() => setView('forgotPassword')}
+                                onClick={() => setShowForgot(true)}
                                 className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
                             >
                                 Forgot Password?
@@ -146,6 +193,8 @@ export default function App() {
                         </div>
                     </form>
                 </div>
+            </div>
+
             </div>
     );
     }

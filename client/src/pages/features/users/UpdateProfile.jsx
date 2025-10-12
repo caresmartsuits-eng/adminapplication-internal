@@ -19,7 +19,7 @@ export default function UpdateProfile({ role, currentUsername }) {
     const [loading, setLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    console.log(role,currentUsername);
+
     // 1. Fetch data on component mount or when selected user changes
     useEffect(() => {
         const fetchUserData = async () => {
@@ -30,14 +30,14 @@ export default function UpdateProfile({ role, currentUsername }) {
                 // Admin fetches all users for dropdown
                 if (role === 'admin') {
                     const usersRes = await fetchWithAuthJSON(`${API_BASE}/api/admin/users`);
-                    console.log(usersRes);
+
                     setAllUsers(usersRes || []);
                 }
 
                 // Fetch details for the currently selected user (either logged-in user or selected admin user)
                 if (selectedUsername) {
                     const userDetailsRes = await fetchWithAuthJSON(`${API_BASE}/api/user/${selectedUsername}`);
-                    console.log(userDetailsRes);
+
                     setFormData({
                         fullName: userDetailsRes.fullName || '',
                         email: userDetailsRes.email || '',
@@ -74,6 +74,12 @@ export default function UpdateProfile({ role, currentUsername }) {
         if (!formData.email) {
             return setError('Email ID is mandatory.');
         }
+        if (!formData.fullName) {
+            return setError('Full Name is mandatory.');
+        }
+        if (!formData.mobileNumber) {
+            return setError('Mobile Number is mandatory.');
+        }
         if (!isValidEmail(formData.email)) {
             return setError('Please enter a valid email address.');
         }
@@ -89,7 +95,7 @@ export default function UpdateProfile({ role, currentUsername }) {
                 email: formData.email,
                 mobileNumber: formData.mobileNumber || undefined, // Optional field
             };
-            console.log("Submitting payload:", payload); // <-- Add this line
+
 
             const res = await fetchWithAuthJSON(endpoint, {
                 method: 'PUT',
@@ -155,7 +161,7 @@ export default function UpdateProfile({ role, currentUsername }) {
 
                 {/* User Full Name (Optional) */}
                 <div>
-                    <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">User Full Name (Optional)</label>
+                    <label htmlFor="fullName" className="block text-sm font-medium text-gray-700">User Full Name <span className="text-red-500">*</span></label>
                     <input
                         type="text"
                         name="fullName"
@@ -184,7 +190,7 @@ export default function UpdateProfile({ role, currentUsername }) {
 
                 {/* Mobile Number (Optional) */}
                 <div>
-                    <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700">Mobile Number (Optional)</label>
+                    <label htmlFor="mobileNumber" className="block text-sm font-medium text-gray-700">Mobile Number <span className="text-red-500">*</span></label>
                     <input
                         type="tel"
                         name="mobileNumber"

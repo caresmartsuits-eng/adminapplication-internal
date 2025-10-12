@@ -17,14 +17,30 @@ export default function UserDashboard({ onLogout,username }) {
   const [view, setView] = React.useState('dashboard');
   const [drawerOpen, setDrawerOpen] = React.useState(false);
 
-  const navItems = [
-    { key: 'dashboard', label: 'Home' },
-    { key: 'orders', label: 'Orders' },
-    { key: 'createOrder', label: 'Create Order' },
-    { key: 'updateProfile', label: 'Update Profile' },
-    { key: 'updatePassword', label: 'Update Password' },
-  ];
 
+
+    const navItems = [
+        {
+            key: 'dashboard',
+            label: 'Dashboard',
+            icon: 'fa-solid fa-chart-line', // Font Awesome for chart/analytics
+            isGroup: false,
+        },
+        {
+            key: 'order-management',
+            label: 'Order Management',
+            icon: 'fa-solid fa-truck', // Font Awesome for shipping/orders
+            isGroup: true,
+            children: [
+                { key: 'orders', label: 'Orders List', icon: 'fa-solid fa-list-check' },
+                { key: 'createOrder', label: 'Create Order', icon: 'fa-solid fa-plus' },
+            ],
+        },
+        ]
+    const profileItems = [
+        { key: 'updateProfile', label: 'My Profile', icon: 'fa-solid fa-user-circle' },
+        { key: 'updatePassword', label: 'Change Password', icon: 'fa-solid fa-lock' },
+    ]
   const renderContent = () => {
     switch (view) {
       case 'orders':
@@ -48,13 +64,13 @@ export default function UserDashboard({ onLogout,username }) {
 
     return (
         <div className="min-h-screen bg-gray-100">
-            <TopBar title="User Dashboard" onLogout={onLogout} onMenu={() => setDrawerOpen(true)} />
+            <TopBar title="User Dashboard" onLogout={onLogout} onMenu={() => setDrawerOpen(true)} username={username} />
             <div className="flex">
                 <div className="hidden md:block w-64 bg-gray-800 text-white min-h-[calc(100vh-56px)]">
-                    <SidebarNav title="Menu" items={navItems} onSelect={setView} onLogout={onLogout} />
+                    <SidebarNav title="Menu" items={navItems} profileItems={profileItems} onSelect={setView} onLogout={onLogout} />
                 </div>
                 <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-                    <SidebarNav title="Menu" items={navItems} onSelect={(k) => { setView(k); setDrawerOpen(false); }} onLogout={onLogout} />
+                    <SidebarNav title="Menu" items={navItems} profileItems={profileItems} onSelect={(k) => { setView(k); setDrawerOpen(false); }} onLogout={onLogout} />
                 </Drawer>
                 <div className="flex-1 p-3 sm:p-6 overflow-auto">
                     <Container>{renderContent()}</Container>
