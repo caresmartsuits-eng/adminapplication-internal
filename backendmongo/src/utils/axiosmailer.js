@@ -100,7 +100,7 @@ const sendEmail = async (email, subject, htmlContent, textContent) => {
 // --- Your original function for backward compatibility and clearer usage ---
 const sendPasswordResetEmail = async (email, rstLink) => {
 
-    const frontEndUrl = process.env.FRONTEND_URL || 'http://smartsuits.netlify.app';
+    const frontEndUrl = process.env.FRONTEND_URL || 'https://smartsuits.netlify.app';
     const resetLink = `${frontEndUrl}/reset-password?token=${rstLink}`;
     const recipientName = email.split('@')[0]; // Simple name extraction
     const subject = 'Password Reset Request';
