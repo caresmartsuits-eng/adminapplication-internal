@@ -6,7 +6,7 @@ const { logAudit } = require('../audits');
 const User = require('../models/User').default;
 const { SECRET_KEY } = require('../auth');
 const jwt = require('jsonwebtoken');
-const { sendPasswordResetEmail } = require('../utils/nodemailer'); // Adjust path as needed
+const { sendPasswordResetEmail } = require('../utils/axiosmailer'); // Adjust path as needed
 
 // ... existing code ...
 
@@ -271,8 +271,20 @@ userRoutes.post('/forgot-password', async (req, res) => {
         // For simplicity, we are relying on the JWT expiration for now.
         // If you want a "valid once" mechanism, you would store the token hash and clear it on use.
 
+        // ----------------------------------------------------------------------
+        // FIX: TEMPORARILY FORCE RECIPIENT TO ADMIN EMAIL FOR TRIAL ACCOUNT TESTING
+        // ----------------------------------------------------------------------
+        const adminEmail = process.env.MAIL_ADMIN_EMAIL;
+        const intendedRecipient = user.email; // Store the actual user email
+
+        // In development/trial, send to the admin email, otherwise send to the user's email
+        const recipientEmail = (process.env.NODE_ENV !== 'production' && adminEmail)
+            ? adminEmail
+            : user.email;
+
+        console.log("recipient email",recipientEmail);
         // 5. Trigger the email send process
-        await sendPasswordResetEmail(user.email, resetToken);
+        await sendPasswordResetEmail(recipientEmail, resetToken);
         console.log("send mail success");
         logAudit('Password reset requested', user.username, { email: user.email, token: 'created' });
 
