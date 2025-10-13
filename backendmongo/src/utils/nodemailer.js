@@ -19,7 +19,7 @@ dotenv.config();
 // -----------------------------------------------------------
 
 const transporter = nodemailer.createTransport({
-    host: process.env.MAIL_HOST || 'smtp.example.com',
+    host: process.env.MAIL_HOST || 'smtp.gmail.com',
     port: process.env.MAIL_PORT || 587,
     secure: process.env.MAIL_PORT == 465, // true for 465, false for other ports
     auth: {
@@ -36,7 +36,12 @@ const transporter = nodemailer.createTransport({
 const sendPasswordResetEmail = async (email, token) => {
     // The link the user clicks to reset their password
     const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${token}`;
-
+console.log("transporter:"+transporter);
+console.log("MAIL_HOST:"+process.env.MAIL_HOST);
+console.log("MAIL_PORT:"+process.env.MAIL_PORT);
+console.log("MAIL_USER:"+process.env.MAIL_USER);
+console.log("MAIL_PASS:"+process.env.MAIL_PASS);
+console.log("resetLink:"+resetLink);
     // Email content
     const mailOptions = {
         from: `"Smart Suits admin application" <${process.env.MAIL_USER}>`,
@@ -57,7 +62,11 @@ const sendPasswordResetEmail = async (email, token) => {
     };
 
     try {
+        console.log("mailOptions:"+mailOptions);
+        console.log("Before sending mail");
         const info = await transporter.sendMail(mailOptions);
+
+        console.log("After sending mail");
         // Success Audit Log
         logAudit('Password reset email sent', email, { // Log the success
             email: email,
@@ -68,6 +77,7 @@ const sendPasswordResetEmail = async (email, token) => {
         // console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info)); // For ethereal.email testing
         return true;
     } catch (error) {
+        console.log("After sending mail, catching error");
         // Failure Audit Log
         logAudit('Password reset email failed', email, { // Log the failure
             email: email,
