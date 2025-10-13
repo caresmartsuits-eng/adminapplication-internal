@@ -31,7 +31,7 @@ const app = express();
 
 const corsOptions = {
     // Replace 'http://localhost:5173' with your actual frontend URL in production
-    origin: 'http://localhost:5173',
+    origin: `${process.env.FRONTEND_URL}`,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true, // Allow cookies and authentication headers
     optionsSuccessStatus: 204 // Handle preflight requests gracefully
